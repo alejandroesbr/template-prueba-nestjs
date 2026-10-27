@@ -101,3 +101,46 @@ npx nest g resource modules/users --no-spec
 >
 > *Each business domain lives in a self-contained module under `src/modules/` encapsulating its controllers, services, DTOs, and entities, supported by global cross-cutting concerns in `src/common/` (standardized exception filters, response interceptors, strict validation pipes, and authentication guards). Following the **YAGNI** principle, I chose a direct 3-layer internal design to avoid premature boilerplate, while keeping module boundaries clean so any feature can scale independently into CQRS or Microservices when required."*
 
+---
+
+## 4. Cheat Sheet Completo de Comandos de NestJS CLI
+
+### A. Crear un Proyecto desde Cero
+```bash
+# 1. Instalar la CLI de NestJS globalmente (solo una vez en tu PC)
+npm i -g @nestjs/cli
+
+# 2. Crear un nuevo proyecto en una carpeta nueva
+nest new nombre-proyecto
+
+# 3. O inicializar NestJS dentro de la carpeta actual (.) eligiendo npm/pnpm
+nest new . --package-manager npm --skip-git
+
+# 4. Instalar el paquete base transversal (Config, Validación, Swagger, Seguridad)
+npm i @nestjs/config @nestjs/swagger class-validator class-transformer helmet
+```
+
+### B. Generar Módulos y Archivos con `nest g` (Adaptado a `src/modules/` y `src/common/`)
+
+> **Tip:** Agrega `--no-spec` si no necesitas que cree el archivo `.spec.ts` de prueba unitaria, o `--dry-run` para ver qué archivos creará sin escribirlos en disco.
+
+```bash
+# 🔥 EL MÁS IMPORTANTE: Crea Módulo + Controlador + Servicio + DTOs + Entity de golpe
+npx nest g resource modules/products
+npx nest g resource modules/products --no-spec
+
+# Crear piezas individuales dentro de un módulo funcional:
+npx nest g module modules/users                  # Crea src/modules/users/users.module.ts
+npx nest g controller modules/users --no-spec    # Crea src/modules/users/users.controller.ts
+npx nest g service modules/users --no-spec       # Crea src/modules/users/users.service.ts
+
+# Crear recursos transversales en src/common/:
+npx nest g filter common/filters/http-exception --flat --no-spec
+npx nest g interceptor common/interceptors/response --flat --no-spec
+npx nest g guard common/guards/jwt-auth --flat --no-spec
+npx nest g pipe common/pipes/parse-int --flat --no-spec
+npx nest g decorator common/decorators/roles --flat --no-spec
+```
+*(La bandera `--flat` evita que la CLI cree una subcarpeta extra con el mismo nombre del archivo).*
+
+
